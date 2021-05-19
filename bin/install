@@ -19,7 +19,7 @@ install_vector() {
 	mkdir -p "${bin_install_path}"
 
 	echo "Downloading vector from ${download_url}"
-	curl -L "$download_url" | tar -xzf - -C ${bin_install_path} --strip-components 3 vector-x86_64-${platform}/bin/vector
+	curl -L "$download_url" | tar -xzf - --directory ${bin_install_path} --strip-components 3 ./vector-x86_64-${platform}/bin/vector
 	chmod +x ${bin_install_path}/vector
 }
 
