@@ -1,6 +1,6 @@
 # asdf-vector
 
-[![GitHub Actions Status](https://github.com/spencergilbert/asdf-vector/workflows/Main/badge.svg?branch=master)](https://github.com/spencergilbert/asdf-vector/actions)
+[![GitHub Actions Status](https://github.com/spencergilbert/asdf-vector/workflows/Main/badge.svg?branch=main)](https://github.com/spencergilbert/asdf-vector/actions)
 
 [Vector](https://vector.dev) plugin for [asdf](https://github.com/asdf-vm/asdf) version manager
 
