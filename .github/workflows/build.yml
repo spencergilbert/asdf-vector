@@ -19,6 +19,6 @@ jobs:
       - name: asdf_plugin_test
         uses: asdf-vm/actions/plugin-test@v1.1.0
         with:
-          command: k3d --version
+          command: vector --version
         env:
           GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
