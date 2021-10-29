@@ -36,7 +36,7 @@ get_arch() {
 get_download_url() {
 	local version="$1"
 	local platform="$(get_arch)"
-	echo "https://github.com/timberio/vector/releases/download/v${version}/vector-${version}-x86_64-${platform}.tar.gz"
+	echo "https://github.com/vectordotdev/vector/releases/download/v${version}/vector-${version}-x86_64-${platform}.tar.gz"
 }
 
 install_vector $ASDF_INSTALL_TYPE $ASDF_INSTALL_VERSION $ASDF_INSTALL_PATH
