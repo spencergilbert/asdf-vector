@@ -49,7 +49,7 @@ download_release() {
 	platform="$3"
 
 	# TODO: Add support for all the platforms and arches Vector builds for
-	url="$GH_REPO/releases/download/v${version}/vector-${version}-x86_64-${target}.tar.gz"
+	url="$GH_REPO/releases/download/v${version}/vector-${version}-x86_64-${platform}.tar.gz"
 
 	echo "* Downloading $TOOL_NAME release $version..."
 	curl "${curl_opts[@]}" -o "$filename" -C - "$url" || fail "Could not download $url"
