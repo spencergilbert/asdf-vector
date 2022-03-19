@@ -1,15 +1,59 @@
-# asdf-vector
+<div align="center">
 
-[![GitHub Actions Status](https://github.com/spencergilbert/asdf-vector/workflows/Main/badge.svg?branch=main)](https://github.com/spencergilbert/asdf-vector/actions)
+# asdf-vector [![Build](https://github.com/spencergilbert/asdf-vector/actions/workflows/build.yml/badge.svg)](https://github.com/spencergilbert/asdf-vector/actions/workflows/build.yml) [![Lint](https://github.com/spencergilbert/asdf-vector/actions/workflows/lint.yml/badge.svg)](https://github.com/spencergilbert/asdf-vector/actions/workflows/lint.yml)
 
-[Vector](https://vector.dev) plugin for [asdf](https://github.com/asdf-vm/asdf) version manager
 
-## Install
+[vector](https://vector.dev) plugin for the [asdf version manager](https://asdf-vm.com).
 
+</div>
+
+# Contents
+
+- [Dependencies](#dependencies)
+- [Install](#install)
+- [Contributing](#contributing)
+- [License](#license)
+
+# Dependencies
+
+- `bash`, `curl`, `tar`: generic POSIX utilities.
+
+# Install
+
+Plugin:
+
+```shell
+asdf plugin add vector
+# or
+asdf plugin add vector https://github.com/spencergilbert/asdf-vector.git
 ```
-asdf plugin-add vector https://github.com/spencergilbert/asdf-vector.git
+
+vector:
+
+```shell
+# Show all installable versions
+asdf list-all vector
+
+# Install specific version
+asdf install vector latest
+
+# Set a version globally (on your ~/.tool-versions file)
+asdf global vector latest
+
+# Now vector commands are available
+vector --help
 ```
 
-## Use
+Check [asdf](https://github.com/asdf-vm/asdf) readme for more instructions on how to
+install & manage versions.
 
-Check out the [asdf](https://github.com/asdf-vm/asdf) readme for instructions on how to install and manage versions of Vector.
+# Contributing
+
+Contributions of any kind welcome! See the [contributing guide](contributing.md).
+
+[Thanks goes to these contributors](https://github.com/spencergilbert/asdf-vector/graphs/contributors)!
+
+# License
+
+See [LICENSE](LICENSE) © [Spencer Gilbert](https://github.com/spencergilbert/)
+
