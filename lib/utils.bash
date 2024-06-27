@@ -42,6 +42,21 @@ get_platform() {
 	fi
 }
 
+get_architecture() {
+	arch=$(uname -m)
+	case $arch in
+		aarch64 | arm64)
+			echo "aarch64"
+			;;
+		x86_64 | x64 | x86-64)
+			echo "x86_64"
+			;;
+		*)
+			echo >&2 "Architecture not supported" && exit 1
+			;;
+	esac
+}
+
 download_release() {
 	local version filename url
 	version="$1"
