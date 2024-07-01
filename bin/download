@@ -10,14 +10,11 @@ source "${plugin_dir}/lib/utils.bash"
 
 mkdir -p "$ASDF_DOWNLOAD_PATH"
 
-platform=$(get_platform)
-architecture=$(get_architecture)
-
-# TODO: Ensure this covers all variants Vector builds for
-release_file="$ASDF_DOWNLOAD_PATH/$TOOL_NAME-$ASDF_INSTALL_VERSION.tar.gz"
+asset=$(get_compatible_asset "$ASDF_INSTALL_VERSION")
+release_file="$ASDF_DOWNLOAD_PATH/${asset}"
 
 # Download tar.gz file to the download directory
-download_release "$ASDF_INSTALL_VERSION" "$release_file" "$platform" "$architecture"
+download_release "$ASDF_INSTALL_VERSION" "$release_file" "$asset"
 
 #  Extract contents of tar.gz file into the download directory
 tar -xzf "$release_file" -C "$ASDF_DOWNLOAD_PATH" --strip-components=2 || fail "Could not extract $release_file"
