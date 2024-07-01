@@ -67,6 +67,10 @@ download_release() {
 	# TODO: Add support for all the platforms and arches Vector builds for
 	url="$GH_REPO/releases/download/v${version}/vector-${version}-${architecture}-${platform}.tar.gz"
 
+	echo "* Check $TOOL_NAME release $version exists for $(uname -sm)"
+	curl "${curl_opts[@]}" --silent -I - "$url" | head -n1 | grep -v --quiet 404 || \
+		fail "Release $version is not available for $(uname -sm)"
+
 	echo "* Downloading $TOOL_NAME release $version..."
 	curl "${curl_opts[@]}" -o "$filename" -C - "$url" || fail "Could not download $url"
 }
