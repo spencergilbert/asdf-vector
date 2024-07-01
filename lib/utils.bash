@@ -45,15 +45,15 @@ get_platform() {
 get_architecture() {
 	arch=$(uname -m)
 	case $arch in
-		aarch64 | arm64)
-			echo "aarch64"
-			;;
-		x86_64 | x64 | x86-64)
-			echo "x86_64"
-			;;
-		*)
-			echo >&2 "Architecture not supported" && exit 1
-			;;
+	aarch64 | arm64)
+		echo "aarch64"
+		;;
+	x86_64 | x64 | x86-64)
+		echo "x86_64"
+		;;
+	*)
+		echo >&2 "Architecture not supported" && exit 1
+		;;
 	esac
 }
 
