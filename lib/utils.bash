@@ -40,9 +40,6 @@ github_api_curl() {
 	gh_opts=("--location")
 	gh_opts+=("--header" "Accept: application/vnd.github+json")
 	gh_opts+=("--header" "X-GitHub-Api-Version: 2022-11-28")
-	if [[ -n "$GITHUB_TOKEN" ]]; then
-		gh_opts+=("--header" "Authorization: token ${GITHUB_TOKEN}")
-	fi
 
 	# Make the call
 	curl "${curl_opts[@]}" "${gh_opts[@]}" "$gh_url"
@@ -132,9 +129,9 @@ download_release() {
 	# Download the SHA256
 	echo "* Verifying checksums..."
 	curl "${curl_opts[@]}" -o "${checksums_dir}/all_files.sha256" "$checksums_url" || fail "Could not download checksums"
-	cat "${checksums_dir}/all_files.sha256" | grep "${asset}" > "${checksums_dir}/${asset}.sha256"
+	cat "${checksums_dir}/all_files.sha256" | grep "${asset}" >"${checksums_dir}/${asset}.sha256"
 	[[ -n "$(cat "${checksums_dir}/${asset}.sha256")" ]] || fail "Could not find checksum for asset ${asset}"
-	sha256sum=$(command -v sha256sum || echo "shasum --algorithm 256")  # from https://github.com/XaF/omni
+	sha256sum=$(command -v sha256sum || echo "shasum --algorithm 256") # from https://github.com/XaF/omni
 	(cd "${checksums_dir}/" && sha256sum --check "${asset}.sha256") || fail "Checksum for asset ${asset} failed to match"
 	rm -f "${checksums_dir}/"*.sha256
 }
