@@ -7,7 +7,7 @@ TOOL_NAME="vector"
 TOOL_TEST="vector --version"
 
 fail() {
-	echo -e "asdf-$TOOL_NAME: $*"
+	echo >&2 -e "asdf-$TOOL_NAME: $*"
 	exit 1
 }
 
@@ -94,13 +94,13 @@ get_compatible_asset() {
 
 	# List the asset names, and filter only the .tar.gz files
 	local assets
-	assets=$(echo "$release_json" | jq --raw-output '.assets | map(.name) | .[] | select(endswith(".tar.gz"))')
+	assets=$(echo "$release_json" | jq --raw-output '.assets | map(.name) | .[] | select(endswith(".tar.gz"))' || true)
 	[[ -n "$assets" ]] || fail "No asset found for release $version"
 
 	# Go over the assets and find the ones that match both the architecture and the platform
 	local matching_assets
-	matching_assets=$(echo "$assets" | grep -E "$platform_grep" | grep -E "$arch_grep")
-	[[ -n "$assets" ]] || fail "No asset found for release $version for $(uname -sm)"
+	matching_assets=$(echo "$assets" | grep -E "$platform_grep" | grep -E "$arch_grep" || true)
+	[[ -n "$matching_assets" ]] || fail "No asset found for release $version for $(uname -sm)"
 
 	# If more than one file, take only the first one
 	echo "$matching_assets" | head -n1
