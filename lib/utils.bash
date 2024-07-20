@@ -97,7 +97,7 @@ get_compatible_asset() {
 
 	# Prepare a grep depending on the current architecture
 	local arch_grep
-	local arch_grep_rosetta
+	local arch_grep_rosetta=""
 	local arch=$(uname -m | tr '[:upper:]' '[:lower:]')
 	case "$arch" in
 	aarch64 | arm64)
