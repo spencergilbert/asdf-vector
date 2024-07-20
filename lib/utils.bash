@@ -45,6 +45,32 @@ github_api_curl() {
 	curl "${curl_opts[@]}" "${gh_opts[@]}" "$gh_url"
 }
 
+check_rosetta_installed() {
+	if [[ -n "${ASDF_VECTOR_DISABLE_ROSETTA:-}" ]] || \
+			! [[ -x /usr/bin/pgrep ]] || \
+			! [[ -x /usr/bin/arch ]] || \
+			! [[ -x /usr/bin/uname ]]; then
+		return 1
+	fi
+
+	local platform=$(uname -s | tr '[:upper:]' '[:lower:]' | tr -d '[:space:]')
+	if [[ "$platform" != "darwin" ]]; then
+		return 1
+	fi
+
+	local oahd_pid=$(/usr/bin/pgrep oahd || true)
+	if [[ -z "$oahd_pid" ]]; then
+		return 1
+	fi
+
+	local arch=$(/usr/bin/arch -x86_64 /usr/bin/uname -m 2>/dev/null || true)
+	if [[ "$arch" != "x86_64" ]]; then
+		return 1
+	fi
+
+	return 0
+}
+
 get_compatible_asset() {
 	if [[ $# -eq 0 ]]; then
 		echo >&2 "usage: get_compatible_asset <version>"
@@ -71,10 +97,14 @@ get_compatible_asset() {
 
 	# Prepare a grep depending on the current architecture
 	local arch_grep
+	local arch_grep_rosetta
 	local arch=$(uname -m | tr '[:upper:]' '[:lower:]')
 	case "$arch" in
 	aarch64 | arm64)
 		arch_grep='\b(aarch64|arm64)\b'
+		if [[ "$platform" == "darwin" ]] && check_rosetta_installed; then
+			arch_grep_rosetta='\b(x64|x86_64|x86-64)\b'
+		fi
 		;;
 	x86_64 | x64 | x86-64)
 		arch_grep='\b(x64|x86_64|x86-64)\b'
@@ -100,6 +130,10 @@ get_compatible_asset() {
 	# Go over the assets and find the ones that match both the architecture and the platform
 	local matching_assets
 	matching_assets=$(echo "$assets" | grep -E "$platform_grep" | grep -E "$arch_grep" || true)
+	if [[ -z "$matching_assets" ]] && [[ -n "$arch_grep_rosetta" ]]; then
+		echo >&2 "No asset found for release $version for $(uname -sm), trying with Rosetta"
+		matching_assets=$(echo "$assets" | grep -E "$platform_grep" | grep -E "$arch_grep_rosetta" || true)
+	fi
 	[[ -n "$matching_assets" ]] || fail "No asset found for release $version for $(uname -sm)"
 
 	# If more than one file, take only the first one
@@ -114,7 +148,7 @@ download_release() {
 
 	url="$GH_REPO/releases/download/v${version}/${asset}"
 
-	checksums_url="$GH_REPO/releases/download/v${version}/vector-0.39.0-SHA256SUMS"
+	checksums_url="$GH_REPO/releases/download/v${version}/vector-${version}-SHA256SUMS"
 	checksums_dir="$(dirname "$filename")"
 
 	# Download the asset
@@ -147,7 +181,7 @@ install_version() {
 
 	(
 		mkdir -p "$install_path"
-		cp -r "$ASDF_DOWNLOAD_PATH"/* "$install_path"
+		cp -r "${ASDF_DOWNLOAD_PATH}"/* "$install_path"
 
 		local tool_cmd
 		tool_cmd="$(echo "$TOOL_TEST" | cut -d' ' -f1)"
