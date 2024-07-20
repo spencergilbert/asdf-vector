@@ -11,6 +11,7 @@
 
 - [Dependencies](#dependencies)
 - [Install](#install)
+- [Environment Variables](#environment-variables)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -46,6 +47,10 @@ vector --help
 
 Check [asdf](https://github.com/asdf-vm/asdf) readme for more instructions on how to
 install & manage versions.
+
+# Environment Variables
+
+- `ASDF_VECTOR_DISABLE_ROSETTA`: Set to any non-empty value to disable defaulting back to using Rosetta 2 on Apple Silicon Macs if a native version is not available. This is useful if you do not want to install binaries that require Rosetta 2 to run.
 
 # Contributing
 
