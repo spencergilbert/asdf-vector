@@ -46,10 +46,10 @@ github_api_curl() {
 }
 
 check_rosetta_installed() {
-	if [[ -n "${ASDF_VECTOR_DISABLE_ROSETTA:-}" ]] || \
-			! [[ -x /usr/bin/pgrep ]] || \
-			! [[ -x /usr/bin/arch ]] || \
-			! [[ -x /usr/bin/uname ]]; then
+	if [[ -n "${ASDF_VECTOR_DISABLE_ROSETTA:-}" ]] ||
+		! [[ -x /usr/bin/pgrep ]] ||
+		! [[ -x /usr/bin/arch ]] ||
+		! [[ -x /usr/bin/uname ]]; then
 		return 1
 	fi
 
@@ -166,7 +166,7 @@ download_release() {
 	cat "${checksums_dir}/all_files.sha256" | grep "${asset}" >"${checksums_dir}/${asset}.sha256"
 	[[ -n "$(cat "${checksums_dir}/${asset}.sha256")" ]] || fail "Could not find checksum for asset ${asset}"
 	sha256sum=$(command -v sha256sum || echo "shasum --algorithm 256") # from https://github.com/XaF/omni
-	(cd "${checksums_dir}/" && sha256sum --check "${asset}.sha256") || fail "Checksum for asset ${asset} failed to match"
+	(cd "${checksums_dir}/" && "$sha256sum" --check "${asset}.sha256") || fail "Checksum for asset ${asset} failed to match"
 	rm -f "${checksums_dir}/"*.sha256
 }
 
