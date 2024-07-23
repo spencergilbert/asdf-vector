@@ -16,6 +16,10 @@ jobs:
           - macos-latest
     runs-on: ${{ matrix.os }}
     steps:
+      - name: Install missing dependencies
+        if: matrix.os == 'macos-latest'
+        run: brew install coreutils
+
       - name: asdf_plugin_test
         uses: asdf-vm/actions/plugin-test@v3
         with:

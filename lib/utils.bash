@@ -161,13 +161,17 @@ download_release() {
 	set -e
 
 	# Download the SHA256
-	echo "* Verifying checksums..."
-	curl "${curl_opts[@]}" -o "${checksums_dir}/all_files.sha256" "$checksums_url" || fail "Could not download checksums"
-	cat "${checksums_dir}/all_files.sha256" | grep "${asset}" >"${checksums_dir}/${asset}.sha256"
-	[[ -n "$(cat "${checksums_dir}/${asset}.sha256")" ]] || fail "Could not find checksum for asset ${asset}"
-	sha256sum=$(command -v sha256sum || echo "shasum --algorithm 256") # from https://github.com/XaF/omni
-	(cd "${checksums_dir}/" && "$sha256sum" --check "${asset}.sha256") || fail "Checksum for asset ${asset} failed to match"
-	rm -f "${checksums_dir}/"*.sha256
+	if command -v sha256sum >/dev/null || command -v shasum >/dev/null; then
+		echo "* Verifying checksums..."
+		curl "${curl_opts[@]}" -o "${checksums_dir}/all_files.sha256" "$checksums_url" || fail "Could not download checksums"
+		cat "${checksums_dir}/all_files.sha256" | grep "${asset}" >"${checksums_dir}/${asset}.sha256"
+		[[ -n "$(cat "${checksums_dir}/${asset}.sha256")" ]] || fail "Could not find checksum for asset ${asset}"
+		sha256sum=$(command -v sha256sum || echo "shasum --algorithm 256") # from https://github.com/XaF/omni
+		(cd "${checksums_dir}/" && "$sha256sum" --check "${asset}.sha256") || fail "Checksum for asset ${asset} failed to match"
+		rm -f "${checksums_dir}/"*.sha256
+	else
+		echo "* Could not find binary to check SHA-256 sums; skipping verification"
+	fi
 }
 
 install_version() {
