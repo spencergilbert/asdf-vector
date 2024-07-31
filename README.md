@@ -51,6 +51,7 @@ install & manage versions.
 # Environment Variables
 
 - `ASDF_VECTOR_DISABLE_ROSETTA`: Set to any non-empty value to disable defaulting back to using Rosetta 2 on Apple Silicon Macs if a native version is not available. This is useful if you do not want to install binaries that require Rosetta 2 to run.
+- `ASDF_VECTOR_FORCE_CHECKSUM`: Set to any non-empty value to fail if there are no tools to verify the checksum of the downloaded archive, or if the file containing the checksums is not found. By default, this is a best effort process.
 
 # Contributing
 

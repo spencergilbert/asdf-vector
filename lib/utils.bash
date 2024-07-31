@@ -154,6 +154,7 @@ download_release() {
 	# Download the asset
 	echo "* Downloading $TOOL_NAME release $version..."
 	set +e
+	local status_code
 	status_code=$(curl "${curl_opts[@]}" -w "%{http_code}" -o "$filename" -C - "$url" 2>/dev/null)
 	if [[ $? -ne 0 ]] && [[ "${status_code}" != "416" ]]; then
 		fail "Could not download $url: status $status_code"
@@ -163,14 +164,28 @@ download_release() {
 	# Download the SHA256
 	if command -v sha256sum >/dev/null || command -v shasum >/dev/null; then
 		echo "* Verifying checksums..."
-		curl "${curl_opts[@]}" -o "${checksums_dir}/all_files.sha256" "$checksums_url" || fail "Could not download checksums"
-		cat "${checksums_dir}/all_files.sha256" | grep "${asset}" >"${checksums_dir}/${asset}.sha256"
-		[[ -n "$(cat "${checksums_dir}/${asset}.sha256")" ]] || fail "Could not find checksum for asset ${asset}"
-		sha256sum=$(command -v sha256sum || echo "shasum --algorithm 256") # from https://github.com/XaF/omni
-		(cd "${checksums_dir}/" && "$sha256sum" --check "${asset}.sha256") || fail "Checksum for asset ${asset} failed to match"
-		rm -f "${checksums_dir}/"*.sha256
+
+		set +e
+		local exit_code
+		curl "${curl_opts[@]}" -o "${checksums_dir}/all_files.sha256" "$checksums_url"
+		exit_code=$?
+		set -e
+
+		if [[ $exit_code -eq 0 ]]; then
+			cat "${checksums_dir}/all_files.sha256" | grep "${asset}" >"${checksums_dir}/${asset}.sha256"
+			[[ -n "$(cat "${checksums_dir}/${asset}.sha256")" ]] || fail "Could not find checksum for asset ${asset}"
+			sha256sum=$(command -v sha256sum || echo "shasum --algorithm 256") # from https://github.com/XaF/omni
+			(cd "${checksums_dir}/" && "$sha256sum" --check "${asset}.sha256") || fail "Checksum for asset ${asset} failed to match"
+			rm -f "${checksums_dir}/"*.sha256
+		elif [[ -n "${ASDF_VECTOR_FORCE_CHECKSUM:-}" ]]; then
+			fail "Could not download checksums file $checksums_url"
+		else
+			echo >&2 "Could not download checksums file; skipping verification"
+		fi
+	elif [[ -n "${ASDF_VECTOR_FORCE_CHECKSUM:-}" ]]; then
+		fail "Could not find binary to check SHA-256 sums"
 	else
-		echo "* Could not find binary to check SHA-256 sums; skipping verification"
+		echo >&2 "Could not find binary to check SHA-256 sums; skipping verification"
 	fi
 }
 
